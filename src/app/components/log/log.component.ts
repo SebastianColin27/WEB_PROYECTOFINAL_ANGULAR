@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpErrorResponse } from '@angular/common/http'; // Importa HttpErrorResponse
-
+import { DatePipe } from '@angular/common';
 
 // Definir la interfaz para el empleado
 interface Employee {
@@ -18,12 +18,20 @@ interface Employee {
   position: string;
 }
 
+// Definir la interfaz para la respuesta de la API
+interface ApiResponse {
+  estado: number;
+  msg: string;
+  employees: Employee[];
+}
+
 @Component({
   selector: 'app-log',
   templateUrl: './log.component.html',
   styleUrls: ['./log.component.css'],
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, NgbModule],
+  providers: [DatePipe] // Asegúrate de incluirlo en los providers si lo importas
 })
 export class LogComponent implements OnInit {
   @ViewChild('logModal') logModal: any;
@@ -38,7 +46,8 @@ export class LogComponent implements OnInit {
     private logsService: LogsService,
     public authService: AuthService,
     private modalService: NgbModal,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public datePipe: DatePipe 
   ) {
     this.employeeForm = this.fb.group({
       first_name: ['', [Validators.required, Validators.minLength(2)]],
@@ -57,11 +66,11 @@ export class LogComponent implements OnInit {
       this.loading = true;
       this.logsService.getLogs().subscribe({
         next: (response) => {
-          this.listadoEmployees = response.employees || [];
+          this.listadoEmployees = response.employees|| [];
           this.loading = false;
         },
         error: (error) => {
-          console.error('Error al cargar los employees:', error);
+          console.error('Error al cargar los gastos:', error);
           this.loading = false;
         },
       });
@@ -123,15 +132,14 @@ export class LogComponent implements OnInit {
     const request = this.isEditMode && this.currentEmployeeId
       ? this.logsService.updateLog(this.currentEmployeeId, employeeData)
       : this.logsService.createLog(employeeData);
-        
-    if (this.isEditMode && this.currentEmployeeId && !this.authService.hasAuthority('UPDATE')) {
-        alert('No tienes permiso para actualizar empleados.');
-        return;
-    } else if(!this.isEditMode && !this.authService.hasAuthority('CREATE')) {
-        alert('No tienes permiso para crear empleados.');
-        return;
-    }
 
+    if (this.isEditMode && this.currentEmployeeId && !this.authService.hasAuthority('UPDATE')) {
+      alert('No tienes permiso para actualizar empleados.');
+      return;
+    } else if (!this.isEditMode && !this.authService.hasAuthority('CREATE')) {
+      alert('No tienes permiso para crear empleados.');
+      return;
+    }
 
     request.subscribe({
       next: () => {
@@ -140,28 +148,28 @@ export class LogComponent implements OnInit {
         this.errorMessage = null; // Limpia el mensaje de error si la operación es exitosa
       },
       error: (err) => {
-          console.error('Error al realizar la operación con el empleado:', err);
-          this.handleError(err);
+        console.error('Error al realizar la operación con el empleado:', err);
+        this.handleError(err);
       },
     });
   }
-  
-  private handleError(error: any){
+
+  private handleError(error: any) {
     let message = 'Ocurrió un error. Por favor, inténtalo de nuevo más tarde.';
-        if (error instanceof HttpErrorResponse) {
-          if (error.status === 400) {
-            message = 'Error en la solicitud. Por favor, revisa los datos ingresados.';
-           } else if (error.status === 401) {
-             message = 'No estas autorizado para realizar esta acción.';
-           } else if (error.status === 404) {
-             message = 'No se encontró el recurso.';
-           } else if (error.status === 500){
-             message = 'Error en el servidor al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.';
-           }
-           else{
-             message = 'Error desconocido. Por favor, inténtalo de nuevo más tarde.';
-           }
-        }
-         this.errorMessage = message;
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 400) {
+        message = 'Error en la solicitud. Por favor, revisa los datos ingresados.';
+      } else if (error.status === 401) {
+        message = 'No estas autorizado para realizar esta acción.';
+      } else if (error.status === 404) {
+        message = 'No se encontró el recurso.';
+      } else if (error.status === 500) {
+        message = 'Error en el servidor al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.';
+      }
+      else {
+        message = 'Error desconocido. Por favor, inténtalo de nuevo más tarde.';
+      }
+    }
+    this.errorMessage = message;
   }
 }

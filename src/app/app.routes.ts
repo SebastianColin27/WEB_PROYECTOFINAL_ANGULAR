@@ -12,9 +12,9 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [authGuard],
     children: [
-      { path: 'logs', component: LogComponent },
+      { path: 'employees', component: LogComponent },
       { path: 'creditos', component: CreditosComponent },
-      { path: '', redirectTo: 'logs', pathMatch: 'full' }
+      { path: '', redirectTo: 'employees', pathMatch: 'full' }
     ]
   },
   { path: '**', redirectTo: '' }

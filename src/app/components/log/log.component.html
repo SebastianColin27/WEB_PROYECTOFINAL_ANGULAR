@@ -15,20 +15,20 @@
       <table class="table table-striped table-hover">
           <thead>
               <tr>
-                  <th>Id</th>
-                  <th>firstName</th>
-                  <th>lastName</th>
-                  <th>HireDate</th>
+                  <th>ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Hire Date</th>
                   <th>Position</th>
               </tr>
           </thead>
           <tbody>
               <tr *ngFor="let employee of listadoEmployees">
-                  <td>{{ employee.id}}</td>
-                  <td>{{ employee.first_name}}</td>
-                  <td>{{ employee.last_name}}</td>
-                  <td>{{ employee.hire_date| date }}</td>
-                  <td>{{ employee.position}}</td>
+                <td>{{employee.id}}</td>
+                <td>{{employee.first_name}}</td>
+                <td>{{employee.last_name}}</td>
+                <td>{{employee.hire_date | date:'yyyy-MM-dd' }}</td>
+                <td>{{employee.position}}</td>
                   <td>
                       <button *ngIf="authService.hasAuthority('UPDATE')" class="btn btn-primary btn-sm me-2"
                           (click)="editEmployee(employee)">

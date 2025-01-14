@@ -17,6 +17,7 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
   private apiUrl = 'https://api1-proyecto-final-wcbdf.onrender.com/api/v1/employees';
+ //private apiUrl = 'http://localhost:8081/api/v1/employees'
   private isBrowser: boolean;
 
   private userPasswords: { [key: string]: string } = {

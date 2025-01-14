@@ -24,8 +24,8 @@ interface ApiResponse {
 })
 export class LogsService {
     // URL de la API para empleados
-  private apiUrl = 'https://api1-proyecto-final-wcbdf.onrender.com/api/v1/employees';
-
+ private apiUrl = 'https://api1-proyecto-final-wcbdf.onrender.com/api/v1/employees';
+//private apiUrl = 'http://localhost:8081/api/v1/employees'
   constructor(
     private http: HttpClient,
     private authService: AuthService
